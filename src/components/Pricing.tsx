@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Bitcoin } from 'lucide-react'
+import { Check, ArrowRight } from 'lucide-react'
 import homePageData from '@/data/homePageData.json'
 import { handlePayment } from '@/lib/payment'
 
@@ -13,7 +13,7 @@ const Pricing = () => {
     priceValue: number
   ) => {
     try {
-      await handlePayment(planId, planName, priceValue)
+      await handlePayment(planId, planName, priceValue, true) // text payment : true for test mode
     } catch (error) {
       console.error('Purchase error:', error)
     }
@@ -67,14 +67,16 @@ const Pricing = () => {
                   onClick={() =>
                     handlePurchase(plan.id, plan.name, plan.priceValue)
                   }
-                  className={`${pricing.buttons.primary.baseClassName} ${
+                  className={`cursor-pointer ${
+                    pricing.buttons.primary.baseClassName
+                  } ${
                     plan.popular
                       ? pricing.buttons.primary.popularClassName
                       : pricing.buttons.primary.regularClassName
                   }`}
                 >
-                  <Bitcoin className="w-5 h-5" />
                   {pricing.buttons.primary.text}
+                  <ArrowRight className="w-5 h-5" />
                 </button>
 
                 <a

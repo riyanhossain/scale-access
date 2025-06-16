@@ -6,6 +6,7 @@ interface PaymentData {
   customerEmail?: string
   successUrl: string
   cancelUrl: string
+  isTest?: boolean
 }
 
 export class PaymentService {
@@ -61,6 +62,7 @@ export class PaymentService {
       success_url: data.successUrl,
       cancel_url: data.cancelUrl,
       ...(data.customerEmail && { customer_email: data.customerEmail }),
+      ...(data.isTest && { test: 'true' }),
     }
   }
 }
@@ -68,7 +70,8 @@ export class PaymentService {
 export const handlePayment = async (
   planId: string,
   planName: string,
-  amount: number
+  amount: number,
+  isTest: boolean = false
 ) => {
   try {
     const paymentUrl = PaymentService.generatePaymentUrl({
@@ -78,6 +81,7 @@ export const handlePayment = async (
       currency: 'USD',
       successUrl: `${window.location.origin}/payment/success?plan=${planId}`,
       cancelUrl: `${window.location.origin}/payment/cancel?plan=${planId}`,
+      isTest,
     })
     window.open(
       paymentUrl,
