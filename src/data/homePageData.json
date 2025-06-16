@@ -5,7 +5,7 @@
     "subtitle": "Own your Facebook ad account. Warm, aged, and built to last.",
     "primaryButton": {
       "text": "Buy Now",
-      "href": "mailto:ops@readyadaccounts.com",
+      "href": "/#pricing",
       "className": "group bg-neon-blue hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 flex items-center gap-2"
     },
     "secondaryButton": {
