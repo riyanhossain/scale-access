@@ -1,0 +1,276 @@
+{
+  "hero": {
+    "title": "Stop Renting.",
+    "highlightTitle": "Start Scaling.",
+    "subtitle": "Own your Facebook ad account. Warm, aged, and built to last.",
+    "primaryButton": {
+      "text": "Buy Now",
+      "href": "mailto:ops@readyadaccounts.com",
+      "className": "group bg-neon-blue hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 flex items-center gap-2"
+    },
+    "secondaryButton": {
+      "text": "View Packages",
+      "href": "#pricing",
+      "icon": "Play",
+      "className": "group border-2 border-white/60 hover:border-white text-soft-gray hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:bg-white/10 flex items-center gap-2"
+    },
+    "stats": [
+      {
+        "value": "$2.4M",
+        "label": "Total Spend",
+        "color": "green",
+        "className": "text-green-400 hover:border-green-400/50"
+      },
+      {
+        "value": "4.2x",
+        "label": "ROAS",
+        "color": "blue",
+        "className": "text-neon-blue hover:border-neon-blue/50"
+      },
+      {
+        "value": "Active",
+        "label": "Account Status",
+        "color": "purple",
+        "className": "text-purple-400 hover:border-purple-400/50"
+      }
+    ],
+    "mockup": {
+      "title": "Facebook Ads Manager",
+      "browserColors": ["bg-red-500", "bg-yellow-500", "bg-green-500"],
+      "containerClassName": "bg-dark-gray/60 backdrop-blur-sm border border-gray-600/50 rounded-2xl p-6 sm:p-8 w-full max-w-5xl mx-auto shadow-2xl",
+      "statsClassName": "bg-true-black/60 border border-gray-700/50 p-6 rounded-xl text-center transition-colors"
+    },
+    "background": {
+      "gradientClassName": "bg-gradient-to-br from-dark-gray via-true-black to-dark-gray",
+      "animatedElements": [
+        {
+          "className": "absolute top-20 left-20 w-72 h-72 bg-neon-blue rounded-full filter blur-3xl animate-pulse"
+        },
+        {
+          "className": "absolute bottom-20 right-20 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl animate-pulse delay-1000"
+        }
+      ]
+    }
+  },
+  "features": {
+    "title": "Built for Performance",
+    "subtitle": "Stop dealing with suspensions, restrictions, and rental fees. Own your infrastructure.",
+    "sectionClassName": "w-full py-24 bg-true-black relative",
+    "containerClassName": "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "gridClassName": "grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12",
+    "features": [
+      {
+        "icon": "Shield",
+        "title": "Aged & Verified",
+        "description": "All accounts are 2–6 months old. Manually farmed. Zero automation. Real trust scores.",
+        "iconContainerClassName": "w-16 h-16 bg-neon-blue/20 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/30 transition-colors",
+        "iconClassName": "w-8 h-8 text-neon-blue",
+        "itemClassName": "group text-center transition-all duration-300 hover:scale-105 space-y-6"
+      },
+      {
+        "icon": "Key",
+        "title": "Real Ownership",
+        "description": "Full access. No limits. No percentage ad spend cuts. Total control.",
+        "iconContainerClassName": "w-16 h-16 bg-neon-blue/20 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/30 transition-colors",
+        "iconClassName": "w-8 h-8 text-neon-blue",
+        "itemClassName": "group text-center transition-all duration-300 hover:scale-105 space-y-6"
+      },
+      {
+        "icon": "Rocket",
+        "title": "Fast Delivery",
+        "description": "Delivered in hours. Fully warmed, fully secure, ready to scale.",
+        "iconContainerClassName": "w-16 h-16 bg-neon-blue/20 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/30 transition-colors",
+        "iconClassName": "w-8 h-8 text-neon-blue",
+        "itemClassName": "group text-center transition-all duration-300 hover:scale-105 space-y-6"
+      }
+    ]
+  },
+  "pricing": {
+    "title": "Choose Your Arsenal",
+    "subtitle": "Stop paying rental fees forever. Own your accounts, control your destiny.",
+    "sectionClassName": "w-full py-24 bg-dark-gray relative",
+    "containerClassName": "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "gridClassName": "grid grid-cols-1 lg:grid-cols-3 gap-8",
+    "popularBadge": {
+      "text": "Most Popular",
+      "className": "bg-neon-blue text-white px-4 py-2 rounded-full text-sm font-semibold"
+    },
+    "paymentConfig": {
+      "apiUrl": "https://app.0xprocessing.com/Payment",
+      "merchantId": "your-merchant-id",
+      "successUrl": "https://readyadaccounts.com/success",
+      "cancelUrl": "https://readyadaccounts.com/cancel",
+      "currency": "USD",
+      "acceptedCryptos": ["BTC", "ETH", "USDT", "USDC"]
+    },
+    "buttons": {
+      "primary": {
+        "text": "Buy Now",
+        "icon": "Bitcoin",
+        "popularClassName": "bg-neon-blue hover:bg-blue-600 text-white hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25",
+        "regularClassName": "bg-gray-800 hover:bg-gray-700 text-white hover:scale-105",
+        "baseClassName": "w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2"
+      },
+      "secondary": {
+        "text": "Request Custom Package",
+        "href": "mailto:ops@readyadaccounts.com",
+        "className": "w-full py-3 border border-white/60 hover:border-white text-soft-gray hover:text-white rounded-lg font-medium transition-all duration-300 hover:bg-white/10 text-center block"
+      }
+    },
+    "plans": [
+      {
+        "id": "starter",
+        "name": "Starter",
+        "price": "$195",
+        "priceValue": 195,
+        "features": ["1 Facebook Ad Account", "Aged 1–2 months", "Delivery in 2 hours"],
+        "popular": false,
+        "cardClassName": "relative bg-true-black/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-neon-blue/50"
+      },
+      {
+        "id": "performance",
+        "name": "Performance",
+        "price": "$540",
+        "priceValue": 540,
+        "features": ["3 Facebook Ad Accounts", "Aged 2–4 months", "Delivery in 8 hours"],
+        "popular": true,
+        "cardClassName": "relative bg-true-black/50 backdrop-blur-sm border border-neon-blue shadow-xl shadow-neon-blue/25 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-neon-blue/50"
+      },
+      {
+        "id": "phantom",
+        "name": "Phantom Pack",
+        "price": "$875",
+        "priceValue": 875,
+        "features": ["5 Facebook Ad Accounts", "Aged 4–6 months", "Private Farm Option"],
+        "popular": false,
+        "cardClassName": "relative bg-true-black/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-neon-blue/50"
+      }
+    ],
+    "featureIcon": {
+      "name": "Check",
+      "className": "w-5 h-5 text-neon-blue flex-shrink-0"
+    },
+    "cryptoIcons": {
+      "BTC": "Bitcoin",
+      "ETH": "Ethereum",
+      "USDT": "DollarSign",
+      "USDC": "DollarSign"
+    }
+  },
+  "comparison": {
+    "title": "Why rent at 5% of ad spend, forever?",
+    "subtitle": "Own an account. Run your ops. Keep your profits.",
+    "sectionClassName": "w-full py-24 bg-true-black relative overflow-hidden",
+    "containerClassName": "w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10",
+    "cardClassName": "bg-dark-gray/30 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 sm:p-12 w-full max-w-4xl",
+    "icons": [
+      {
+        "name": "TrendingUp",
+        "className": "w-12 h-12 text-red-400"
+      },
+      {
+        "name": "DollarSign",
+        "className": "w-12 h-12 text-neon-blue"
+      }
+    ],
+    "vsText": {
+      "text": "VS",
+      "className": "text-2xl font-bold text-soft-gray"
+    },
+    "highlightText": {
+      "own": {
+        "text": "Own",
+        "className": "text-neon-blue font-semibold"
+      },
+      "run": {
+        "text": "Run",
+        "className": "text-green-400 font-semibold"
+      },
+      "keep": {
+        "text": "Keep",
+        "className": "text-purple-400 font-semibold"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Trusted by Operators",
+    "subtitle": "Join hundreds of media buyers who've made the switch to ownership.",
+    "sectionClassName": "w-full py-24 bg-dark-gray relative",
+    "containerClassName": "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "gridClassName": "grid grid-cols-1 md:grid-cols-3 gap-8",
+    "cardClassName": "bg-true-black/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 hover:border-neon-blue/50 transition-all duration-300 hover:bg-true-black/70 shadow-lg space-y-6",
+    "starIcon": {
+      "name": "Star",
+      "className": "w-5 h-5 text-yellow-400 fill-current",
+      "count": 5
+    },
+    "testimonials": [
+      {
+        "quote": "No more suspensions. No more waiting on rentals. Just plug in and launch.",
+        "author": "@FunnelFiend",
+        "avatarClassName": "w-12 h-12 bg-gradient-to-r from-neon-blue to-purple-500 rounded-full flex items-center justify-center text-white font-bold"
+      },
+      {
+        "quote": "I've scaled 3 offers without touching a rental. This is my edge now.",
+        "author": "@DripifyDegen",
+        "avatarClassName": "w-12 h-12 bg-gradient-to-r from-neon-blue to-purple-500 rounded-full flex items-center justify-center text-white font-bold"
+      },
+      {
+        "quote": "Legit, clean, fast. These accounts are built like tanks.",
+        "author": "@CPABlitz",
+        "avatarClassName": "w-12 h-12 bg-gradient-to-r from-neon-blue to-purple-500 rounded-full flex items-center justify-center text-white font-bold"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Ready to deploy your next campaign?",
+    "subtitle": "Stop waiting. Stop renting. Start owning your Facebook advertising infrastructure today.",
+    "contactTitle": "Get in Touch",
+    "sectionClassName": "w-full py-24 bg-true-black relative",
+    "containerClassName": "w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10",
+    "primaryButton": {
+      "text": "Buy Now",
+      "href": "/#pricing",
+      "icon": "ArrowRight",
+      "className": "group bg-neon-blue hover:bg-blue-600 text-white px-12 py-5 rounded-lg font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 flex items-center gap-3 mx-auto w-fit"
+    },
+    "contactCardClassName": "bg-dark-gray/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-neon-blue/50 transition-all duration-300 space-y-4",
+    "contacts": [
+      {
+        "icon": "Mail",
+        "title": "Email",
+        "value": "ops@readyadaccounts.com",
+        "href": "mailto:ops@readyadaccounts.com",
+        "iconClassName": "w-8 h-8 text-neon-blue mx-auto"
+      },
+      {
+        "icon": "MessageCircle",
+        "title": "Telegram",
+        "value": "@phantomdrop",
+        "href": "https://t.me/phantomdrop",
+        "iconClassName": "w-8 h-8 text-neon-blue mx-auto"
+      },
+      {
+        "icon": "Bitcoin",
+        "title": "Payment",
+        "value": "Crypto payments preferred",
+        "href": null,
+        "iconClassName": "w-8 h-8 text-neon-blue mx-auto"
+      }
+    ],
+    "copyright": "© 2025 Ready Ad Accounts. All rights reserved."
+  },
+  "animations": {
+    "fadeInUp": "animate-fade-in-up",
+    "fadeInUpDelay": "animate-fade-in-up delay-500",
+    "pulse": "animate-pulse",
+    "pulseDelay": "animate-pulse delay-1000"
+  },
+  "colors": {
+    "primary": "neon-blue",
+    "secondary": "soft-gray",
+    "accent": "green-400",
+    "warning": "red-400",
+    "info": "purple-400"
+  }
+}
