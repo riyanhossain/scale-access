@@ -8,15 +8,19 @@ import Link from 'next/link'
 function PaymentCancelContent() {
   const searchParams = useSearchParams()
   const [planName, setPlanName] = useState('')
+  const [orderId, setOrderId] = useState('')
 
   useEffect(() => {
     const plan = searchParams.get('plan')
+    const orderIdParam = searchParams.get('orderId')
+
     const planNames = {
       starter: 'Starter Package',
       performance: 'Performance Package',
       phantom: 'Phantom Pack',
     }
     setPlanName(planNames[plan as keyof typeof planNames] || 'Package')
+    setOrderId(orderIdParam || '')
   }, [searchParams])
 
   return (
@@ -29,6 +33,12 @@ function PaymentCancelContent() {
           <span className="text-neon-blue font-semibold">{planName}</span> was
           cancelled.
         </p>
+        {orderId && (
+          <p className="text-soft-gray text-sm">
+            Order ID:{' '}
+            <span className="text-neon-blue font-mono">{orderId}</span>
+          </p>
+        )}
       </div>
 
       <div className="bg-dark-gray/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 space-y-4">
