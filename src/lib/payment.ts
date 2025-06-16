@@ -38,14 +38,15 @@ export class PaymentService {
     }
   }
 
-  static generatePaymentUrl(data: PaymentData): string {
+  static generatePaymentUrl(data: PaymentData, customOrderId?: string): string {
+    const orderId = customOrderId || this.generateOrderId()
     const params = new URLSearchParams({
-      ...this.preparePaymentData(data, this.generateOrderId()),
+      ...this.preparePaymentData(data, orderId),
     })
     return `${this.API_URL}?${params.toString()}`
   }
 
-  private static generateOrderId(): string {
+  static generateOrderId(): string {
     return `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
@@ -74,15 +75,21 @@ export const handlePayment = async (
   isTest: boolean = false
 ) => {
   try {
-    const paymentUrl = PaymentService.generatePaymentUrl({
-      planId,
-      planName,
-      amount,
-      currency: 'USD',
-      successUrl: `${window.location.origin}/payment/success?plan=${planId}`,
-      cancelUrl: `${window.location.origin}/payment/cancel?plan=${planId}`,
-      isTest,
-    })
+    const orderId = PaymentService.generateOrderId()
+
+    const paymentUrl = PaymentService.generatePaymentUrl(
+      {
+        planId,
+        planName,
+        amount,
+        currency: 'USD',
+        successUrl: `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`,
+        cancelUrl: `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`,
+        isTest,
+      },
+      orderId
+    )
+
     window.open(
       paymentUrl,
       '_blank',
