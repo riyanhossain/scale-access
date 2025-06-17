@@ -127,7 +127,7 @@ function PaymentForm() {
             Complete Your Order
           </h1>
           <p className="text-soft-gray text-lg">
-            Enter your details to purchase the {selectedPlan.name} plan
+            Enter your details to purchase the {selectedPlan?.name} plan
           </p>
         </div>
 
@@ -209,7 +209,7 @@ function PaymentForm() {
                 disabled={isSubmitting}
                 className="w-full bg-neon-blue hover:bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 cursor-pointer"
               >
-                {isSubmitting ? 'Processing...' : `Pay ${selectedPlan.price}`}
+                {isSubmitting ? 'Processing...' : `Pay ${selectedPlan?.price}`}
               </Button>
             </form>
           </Card>
@@ -221,10 +221,10 @@ function PaymentForm() {
             <div className="space-y-4">
               <div className="flex justify-between items-center pb-4 border-b border-gray-700">
                 <h3 className="font-semibold text-lg">
-                  {selectedPlan.name} Plan
+                  {selectedPlan?.name} Plan
                 </h3>
                 <span className="text-neon-blue font-bold text-xl">
-                  {selectedPlan.price}
+                  {selectedPlan?.price}
                 </span>
               </div>
 
@@ -234,7 +234,7 @@ function PaymentForm() {
                   Plan includes:
                 </h4>
                 <ul className="space-y-3">
-                  {selectedPlan.features.map((feature, index) => (
+                  {selectedPlan?.features.map((feature, index) => (
                     <li
                       key={index}
                       className="flex items-center gap-3 text-soft-gray"
@@ -249,7 +249,7 @@ function PaymentForm() {
                 <div className="flex justify-between items-center text-lg">
                   <span className="font-medium">Total</span>
                   <span className="font-bold text-white">
-                    {selectedPlan.price}
+                    {selectedPlan?.price}
                   </span>
                 </div>
                 <p className="text-xs text-soft-gray mt-2">
