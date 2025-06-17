@@ -1,4 +1,5 @@
 {
+  "currency": ["BTC", "USDT", "USDC", "LTC", "ETH"],
   "hero": {
     "title": "Stop Renting.",
     "highlightTitle": "Start Scaling.",
