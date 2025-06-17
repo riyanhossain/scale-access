@@ -54,7 +54,7 @@ export default function PaymentFormPage() {
       email: formData.email,
       FirstName: formData.firstName,
       LastName: formData.lastName,
-      Amount: priceValue.toString(),
+      AmountUSD: priceValue.toString(),
       Currency: 'BTC',
       MerchantId: process.env.NEXT_PUBLIC_OXPROCESSING_MERCHANT_ID || '',
       ClientId: Date.now().toString(),
