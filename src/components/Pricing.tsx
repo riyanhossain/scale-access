@@ -2,21 +2,18 @@
 
 import { Check, ArrowRight } from 'lucide-react'
 import homePageData from '@/data/homePageData.json'
-import { handlePayment } from '@/lib/payment'
 
 const Pricing = () => {
   const { pricing } = homePageData
 
-  const handlePurchase = async (
+  const handlePurchase = (
     planId: string,
     planName: string,
     priceValue: number
   ) => {
-    try {
-      await handlePayment(planId, planName, priceValue, true) // text payment : true for test mode
-    } catch (error) {
-      console.error('Purchase error:', error)
-    }
+    window.location.href = `/payment/form?plan=${planId}&name=${encodeURIComponent(
+      planName
+    )}&price=${priceValue}`
   }
 
   return (
