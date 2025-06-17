@@ -10,12 +10,8 @@ const Pricing = () => {
 
   const handlePurchase = (
     planId: string,
-    planName: string,
-    priceValue: number
   ) => {
-    router.push(`/payment/form?plan=${planId}&name=${encodeURIComponent(
-      planName
-    )}&price=${priceValue}`)
+    router.push(`/payment/form?plan=${planId}`)
 
   }
 
@@ -65,7 +61,7 @@ const Pricing = () => {
               <div className="space-y-3">
                 <button
                   onClick={() =>
-                    handlePurchase(plan.id, plan.name, plan.priceValue)
+                    handlePurchase(plan.id)
                   }
                   className={`cursor-pointer ${
                     pricing.buttons.primary.baseClassName

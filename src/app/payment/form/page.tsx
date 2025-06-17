@@ -32,15 +32,9 @@ type PaymentFormData = z.infer<typeof paymentFormSchema>
 function PaymentForm() {
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan') || ''
-  const planName = searchParams.get('name') || ''
-  const priceValue = Number(searchParams.get('price') || '0')
 
   const { pricing } = homePageData
-  const selectedPlan = pricing.plans.find((plan) => plan.id === planId) || {
-    name: planName,
-    price: `$${priceValue}`,
-    features: [],
-  }
+  const selectedPlan = pricing.plans.find((plan) => plan.id === planId);
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -65,13 +59,17 @@ function PaymentForm() {
       const orderId = Date.now().toString()
       const url = 'https://app.0xprocessing.com/Payment'
 
+      if (!selectedPlan) {
+        throw new Error('Selected plan not found')
+      }
+
       // Create URL-encoded data according to 0xProcessing API specification
       const params = new URLSearchParams()
       params.append('test', 'true') // Set to false for production
       params.append('email', data.email)
       params.append('name', data.firstName)
       params.append('lastname', data.lastName)
-      params.append('amount', priceValue.toString())
+      params.append('amount', selectedPlan.priceValue.toString())
       params.append('currency', 'USDT')
       params.append('MerchantId', "0xMR2409448")
       params.append('ClientId', orderId)
@@ -80,8 +78,6 @@ function PaymentForm() {
       params.append('SuccessUrl', `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`)
       params.append('CancelUrl', `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`)
 
-      console.log('Submitting payment with params:', Object.fromEntries(params))
-
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -89,9 +85,6 @@ function PaymentForm() {
         },
         body: params.toString(),
       })
-
-      console.log('Response status:', response.status)
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()))
 
       if (!response.ok) {
         const errorText = await response.text()
