@@ -62,37 +62,52 @@ function PaymentForm() {
     setIsSubmitting(true)
     
     try {
-
+      const orderId = Date.now().toString()
       const url = 'https://app.0xprocessing.com/Payment'
 
+      // Create form data according to 0xProcessing API specification
       const formData = new FormData()
-      formData.append('Email', data.email)
-      formData.append('FirstName', data.firstName)
-      formData.append('LastName', data.lastName)
-      formData.append('Currency', 'BTC')
-      formData.append('AmountUSD', priceValue.toString())
+      formData.append('test', 'true') // Set to false for production
+      formData.append('email', data.email)
+      formData.append('name', data.firstName)
+      formData.append('lastname', data.lastName)
+      formData.append('amount', priceValue.toString())
+      formData.append('currency', 'USDT') // Using USDT as mentioned in the UI
       formData.append('MerchantId', process.env.NEXT_PUBLIC_MERCHANT_ID || '')
-      formData.append('Test', "true")
-      formData.append("AutoReturn", "true")
-      formData.append('SuccessUrl', `${process.env.NEXT_PUBLIC_SITE_URL}/payment/success?plan=${planId}&orderId=${Date.now()}`)
-      formData.append('CancelUrl', `${process.env.NEXT_PUBLIC_SITE_URL}/payment/cancel?plan=${planId}&orderId=${Date.now()}`)
+      formData.append('ClientId', orderId) // Using orderId as ClientId
+      formData.append('BillingId', orderId) // Using orderId as BillingId
+      formData.append('ReturnUrl', 'true') // To get JSON response with redirectUrl
+      formData.append('SuccessUrl', `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`)
+      formData.append('CancelUrl', `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`)
 
-      const res = await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
         body: formData,
       })
 
-      if (!res.ok) {
-        throw new Error('Failed to process payment')
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
-      // const result = await res.json()
-      // if (!result.success) {
-      //   throw new Error(result.message || 'Payment processing failed')
-      // }
-      console.log('Payment processing successful')
+
+      // Check if response is JSON (when ReturnUrl=true) or redirect
+      const contentType = response.headers.get('content-type')
+      
+      if (contentType && contentType.includes('application/json')) {
+        // Handle JSON response with redirectUrl
+        const result = await response.json()
+        if (result.redirectUrl) {
+          window.location.href = result.redirectUrl
+        } else {
+          throw new Error('No redirect URL received from payment processor')
+        }
+      } else {
+        // Handle direct redirect (fallback)
+        window.location.href = response.url
+      }
       
     } catch (error) {
       console.error('Payment processing failed:', error)
+      alert(`Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
     }
