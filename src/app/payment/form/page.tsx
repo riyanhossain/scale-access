@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import homePageData from '@/data/homePageData.json'
 
-export default function PaymentFormPage() {
+function PaymentForm() {
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan') || ''
   const planName = searchParams.get('name') || ''
@@ -105,6 +105,7 @@ export default function PaymentFormPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Your form inputs... */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -188,6 +189,7 @@ export default function PaymentFormPage() {
                 </span>
               </div>
 
+              <div className="space-y-3 py-4"></div>
               <div className="space-y-3 py-4">
                 <h4 className="text-sm font-medium text-soft-gray">
                   Plan includes:
@@ -204,7 +206,6 @@ export default function PaymentFormPage() {
                   ))}
                 </ul>
               </div>
-
               <div className="pt-4 border-t border-gray-700">
                 <div className="flex justify-between items-center text-lg">
                   <span className="font-medium">Total</span>
@@ -221,5 +222,13 @@ export default function PaymentFormPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PaymentFormPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentForm />
+    </Suspense>
   )
 }
