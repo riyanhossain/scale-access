@@ -92,7 +92,7 @@ function PaymentForm() {
       params.append('email', data.email)
       params.append('name', data.firstName)
       params.append('lastname', data.lastName)
-      params.append('amount', selectedPlan.priceValue.toString())
+      params.append('AmountUSD', selectedPlan.priceValue.toString())
       params.append('currency', data.currency)
       params.append('MerchantId', "0xMR2409448")
       params.append('ClientId', orderId)
