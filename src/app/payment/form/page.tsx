@@ -65,28 +65,38 @@ function PaymentForm() {
       const orderId = Date.now().toString()
       const url = 'https://app.0xprocessing.com/Payment'
 
-      // Create form data according to 0xProcessing API specification
-      const formData = new FormData()
-      formData.append('test', 'true') // Set to false for production
-      formData.append('email', data.email)
-      formData.append('name', data.firstName)
-      formData.append('lastname', data.lastName)
-      formData.append('amount', priceValue.toString())
-      formData.append('currency', 'USDT') // Using USDT as mentioned in the UI
-      formData.append('MerchantId', process.env.NEXT_PUBLIC_MERCHANT_ID || '')
-      formData.append('ClientId', orderId) // Using orderId as ClientId
-      formData.append('BillingId', orderId) // Using orderId as BillingId
-      formData.append('ReturnUrl', 'true') // To get JSON response with redirectUrl
-      formData.append('SuccessUrl', `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`)
-      formData.append('CancelUrl', `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`)
+      // Create URL-encoded data according to 0xProcessing API specification
+      const params = new URLSearchParams()
+      params.append('test', 'true') // Set to false for production
+      params.append('email', data.email)
+      params.append('name', data.firstName)
+      params.append('lastname', data.lastName)
+      params.append('amount', priceValue.toString())
+      params.append('currency', 'USDT')
+      params.append('MerchantId', process.env.NEXT_PUBLIC_MERCHANT_ID || '')
+      params.append('ClientId', orderId)
+      params.append('BillingId', orderId)
+      params.append('ReturnUrl', 'true')
+      params.append('SuccessUrl', `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`)
+      params.append('CancelUrl', `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`)
+
+      console.log('Submitting payment with params:', Object.fromEntries(params))
 
       const response = await fetch(url, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
       })
 
+      console.log('Response status:', response.status)
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text()
+        console.log('Error response body:', errorText)
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
       }
 
       // Check if response is JSON (when ReturnUrl=true) or redirect
@@ -95,6 +105,7 @@ function PaymentForm() {
       if (contentType && contentType.includes('application/json')) {
         // Handle JSON response with redirectUrl
         const result = await response.json()
+        console.log('Payment response:', result)
         if (result.redirectUrl) {
           window.location.href = result.redirectUrl
         } else {
@@ -102,6 +113,8 @@ function PaymentForm() {
         }
       } else {
         // Handle direct redirect (fallback)
+        const responseText = await response.text()
+        console.log('Non-JSON response:', responseText)
         window.location.href = response.url
       }
       
