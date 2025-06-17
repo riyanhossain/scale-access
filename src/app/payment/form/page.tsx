@@ -73,7 +73,7 @@ function PaymentForm() {
       params.append('lastname', data.lastName)
       params.append('amount', priceValue.toString())
       params.append('currency', 'USDT')
-      params.append('MerchantId', process.env.NEXT_PUBLIC_MERCHANT_ID || '')
+      params.append('MerchantId', "0xMR2409448")
       params.append('ClientId', orderId)
       params.append('BillingId', orderId)
       params.append('ReturnUrl', 'true')
