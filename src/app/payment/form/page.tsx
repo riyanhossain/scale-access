@@ -2,11 +2,32 @@
 
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import homePageData from '@/data/homePageData.json'
+
+// Zod schema for form validation
+const paymentFormSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+  firstName: z
+    .string()
+    .min(1, 'First name is required')
+    .min(2, 'First name must be at least 2 characters'),
+  lastName: z
+    .string()
+    .min(1, 'Last name is required')
+    .min(2, 'Last name must be at least 2 characters'),
+})
+
+type PaymentFormData = z.infer<typeof paymentFormSchema>
 
 function PaymentForm() {
   const searchParams = useSearchParams()
@@ -21,64 +42,60 @@ function PaymentForm() {
     features: [],
   }
 
-  const [formData, setFormData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-  })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formError, setFormError] = useState('')
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  // React Hook Form with Zod validation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PaymentFormData>({
+    resolver: zodResolver(paymentFormSchema),
+    defaultValues: {
+      email: '',
+      firstName: '',
+      lastName: '',
+    },
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: PaymentFormData) => {
     setIsSubmitting(true)
-    setFormError('')
+    
+    try {
 
-    if (!formData.email || !formData.firstName || !formData.lastName) {
-      setFormError('All fields are required')
+      const url = 'https://app.0xprocessing.com/Payment'
+
+      const formData = new FormData()
+      formData.append('Email', data.email)
+      formData.append('FirstName', data.firstName)
+      formData.append('LastName', data.lastName)
+      formData.append('Currency', 'BTC')
+      formData.append('AmountUSD', priceValue.toString())
+      formData.append('MerchantId', process.env.NEXT_PUBLIC_MERCHANT_ID || '')
+      formData.append('Test', "true")
+      formData.append("AutoReturn", "true")
+      formData.append('SuccessUrl', `${process.env.NEXT_PUBLIC_SITE_URL}/payment/success?plan=${planId}&orderId=${Date.now()}`)
+      formData.append('CancelUrl', `${process.env.NEXT_PUBLIC_SITE_URL}/payment/cancel?plan=${planId}&orderId=${Date.now()}`)
+
+      const res = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to process payment')
+      }
+      // const result = await res.json()
+      // if (!result.success) {
+      //   throw new Error(result.message || 'Payment processing failed')
+      // }
+      console.log('Payment processing successful')
+      
+    } catch (error) {
+      console.error('Payment processing failed:', error)
+    } finally {
       setIsSubmitting(false)
-      return
     }
-
-    const form = document.createElement('form')
-    form.method = 'post'
-    form.action = 'https://app.0xprocessing.com/Payment'
-
-    const formInputs = {
-      test: true,
-      email: formData.email,
-      FirstName: formData.firstName,
-      LastName: formData.lastName,
-      AmountUSD: priceValue.toString(),
-      Currency: 'BTC',
-      MerchantId: process.env.NEXT_PUBLIC_OXPROCESSING_MERCHANT_ID || '',
-      ClientId: Date.now().toString(),
-      BillingId: Math.floor(Math.random() * 100000).toString(),
-      SuccessUrl: `${
-        window.location.origin
-      }/payment/success?plan=${planId}&orderId=${Date.now()}`,
-      CancelUrl: `${
-        window.location.origin
-      }/payment/cancel?plan=${planId}&orderId=${Date.now()}`,
-      AutoReturn: true,
-    }
-
-    Object.entries(formInputs).forEach(([name, value]) => {
-      const input = document.createElement('input')
-      input.type = 'hidden'
-      input.name = name
-      input.value = value.toString()
-      form.appendChild(input)
-    })
-
-    document.body.appendChild(form)
-    form.submit()
-    document.body.removeChild(form)
   }
 
   return (
@@ -98,14 +115,8 @@ function PaymentForm() {
           <Card className="bg-dark-gray/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
             <h2 className="text-xl font-bold mb-6">Contact Information</h2>
 
-            {formError && (
-              <div className="bg-red-900/30 border border-red-500 text-red-200 p-3 rounded-lg mb-6">
-                {formError}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Your form inputs... */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Email Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -115,16 +126,19 @@ function PaymentForm() {
                 </label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
+                  {...register('email')}
                   className="bg-true-black/50 border-gray-700 text-white"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
+              {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label
@@ -135,14 +149,16 @@ function PaymentForm() {
                   </label>
                   <Input
                     id="firstName"
-                    name="firstName"
                     type="text"
                     placeholder="John"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
+                    {...register('firstName')}
                     className="bg-true-black/50 border-gray-700 text-white"
-                    required
                   />
+                  {errors.firstName && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -154,14 +170,16 @@ function PaymentForm() {
                   </label>
                   <Input
                     id="lastName"
-                    name="lastName"
                     type="text"
                     placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
+                    {...register('lastName')}
                     className="bg-true-black/50 border-gray-700 text-white"
-                    required
                   />
+                  {errors.lastName && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.lastName.message}
+                    </p>
+                  )}
                 </div>
               </div>
 

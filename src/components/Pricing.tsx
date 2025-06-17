@@ -2,18 +2,21 @@
 
 import { Check, ArrowRight } from 'lucide-react'
 import homePageData from '@/data/homePageData.json'
+import { useRouter } from 'next/navigation'
 
 const Pricing = () => {
   const { pricing } = homePageData
+  const router = useRouter()
 
   const handlePurchase = (
     planId: string,
     planName: string,
     priceValue: number
   ) => {
-    window.location.href = `/payment/form?plan=${planId}&name=${encodeURIComponent(
+    router.push(`/payment/form?plan=${planId}&name=${encodeURIComponent(
       planName
-    )}&price=${priceValue}`
+    )}&price=${priceValue}`)
+
   }
 
   return (
