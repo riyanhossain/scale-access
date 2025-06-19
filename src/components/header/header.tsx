@@ -111,7 +111,7 @@ const Header = () => {
           </nav>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden flex flex-col items-center justify-center w-8 h-8 space-y-1.5 focus:outline-none z-50"
+            className="md:hidden flex flex-col items-center justify-center w-8 h-8 space-y-1.5 focus:outline-none z-50 cursor-pointer"
             aria-label="Toggle menu"
           >
             <span
