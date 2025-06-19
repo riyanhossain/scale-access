@@ -15,7 +15,7 @@ const FinalCTA = () => {
   }
 
   return (
-    <section className={contact.sectionClassName}>
+    <section id="contact" className={contact.sectionClassName}>
       <div className="absolute inset-0 bg-gradient-to-t from-neon-blue/5 via-transparent to-transparent"></div>
 
       <div className={contact.containerClassName}>

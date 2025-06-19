@@ -20,7 +20,7 @@ const Comparison = () => {
   }
 
   return (
-    <section className={comparison.sectionClassName}>
+    <section id="comparison" className={comparison.sectionClassName}>
       <div
         className="absolute inset-0 opacity-5"
         style={{

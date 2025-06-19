@@ -101,13 +101,6 @@ body {
   background: #4b5563;
 }
 
-button:focus,
-a:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.5);
-  border-radius: 0.375rem;
-}
-
 .group:hover .group-hover\:translate-x-1 {
   transform: translateX(0.25rem);
 }

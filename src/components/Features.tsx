@@ -1,5 +1,5 @@
-import { Shield, Key, Rocket } from "lucide-react"
-import homePageData from "@/data/homePageData.json"
+import { Shield, Key, Rocket } from 'lucide-react'
+import homePageData from '@/data/homePageData.json'
 
 const Features = () => {
   const { features } = homePageData
@@ -14,11 +14,15 @@ const Features = () => {
   }
 
   return (
-    <section className={features.sectionClassName}>
+    <section id="performance" className={features.sectionClassName}>
       <div className={features.containerClassName}>
         <div className="text-center mb-16 space-y-6">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white">{features.title}</h2>
-          <p className="text-xl text-soft-gray max-w-2xl mx-auto">{features.subtitle}</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white">
+            {features.title}
+          </h2>
+          <p className="text-xl text-soft-gray max-w-2xl mx-auto">
+            {features.subtitle}
+          </p>
         </div>
 
         <div className={features.gridClassName}>
@@ -32,9 +36,13 @@ const Features = () => {
                   </div>
                 </div>
 
-                <h3 className="text-2xl font-bold text-white">{feature.title}</h3>
+                <h3 className="text-2xl font-bold text-white">
+                  {feature.title}
+                </h3>
 
-                <p className="text-soft-gray leading-relaxed">{feature.description}</p>
+                <p className="text-soft-gray leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             )
           })}
