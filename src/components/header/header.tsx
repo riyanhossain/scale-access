@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -8,8 +8,35 @@ const Header = () => {
   const [activeLink, setActiveLink] = useState('')
   const [isScrolled, setIsScrolled] = useState(false)
 
+  const navLinks = useMemo(
+    () => [
+      { name: 'Performance', href: '#performance' },
+      { name: 'Pricing', href: '#pricing' },
+      { name: 'Trusted By', href: '#trusted-by' },
+      { name: 'Contact Us', href: '#contact' },
+      { name: 'Buy Now', href: '#pricing', isButton: true },
+    ],
+    []
+  )
+
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10)
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+
+      const sections = navLinks.map((link) => link.href.substring(1))
+
+      for (const section of sections) {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            setActiveLink(section)
+            break
+          }
+        }
+      }
+    }
+
     const handleHashChange = () => {
       const hash = window.location.hash
       if (hash) setActiveLink(hash.substring(1))
@@ -18,20 +45,13 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll)
     window.addEventListener('hashchange', handleHashChange)
     handleHashChange()
+    handleScroll()
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('hashchange', handleHashChange)
     }
-  }, [])
-
-  const navLinks = [
-    { name: 'Performance', href: '#performance' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Trusted By', href: '#trusted-by' },
-    { name: 'Contact Us', href: '#contact' },
-    { name: 'Buy Now', href: '#pricing', isButton: true },
-  ]
+  }, [navLinks])
 
   return (
     <header
@@ -52,7 +72,6 @@ const Header = () => {
             />
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:block">
             <ul className="flex items-center space-x-8">
               {navLinks.map((link) => (
@@ -91,8 +110,6 @@ const Header = () => {
               ))}
             </ul>
           </nav>
-
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden flex flex-col items-center justify-center w-8 h-8 space-y-1.5 focus:outline-none z-50"
@@ -116,7 +133,6 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation - Slide from right */}
         <div
           className={`md:hidden fixed top-0 right-0 h-full w-full bg-dark-gray shadow-lg transition-transform transform duration-300 ease-in-out z-40 ${
             isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -153,7 +169,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Overlay when mobile menu is open */}
         {isOpen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
