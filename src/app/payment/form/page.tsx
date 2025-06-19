@@ -86,7 +86,7 @@ function PaymentForm() {
 
       // Create URL-encoded data according to 0xProcessing API specification
       const params = new URLSearchParams();
-      params.append("Test", "true"); // Set to false for production
+      // params.append("Test", "true"); // Set to false for production
       params.append("Email", data.email);
       params.append("FirstName", data.firstName);
       params.append("LastName", data.lastName);
