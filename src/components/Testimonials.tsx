@@ -1,15 +1,19 @@
-import { Star } from "lucide-react"
-import homePageData from "@/data/homePageData.json"
+import { Star } from 'lucide-react'
+import homePageData from '@/data/homePageData.json'
 
 const Testimonials = () => {
   const { testimonials } = homePageData
 
   return (
-    <section className={testimonials.sectionClassName}>
+    <section id="trusted-by" className={testimonials.sectionClassName}>
       <div className={testimonials.containerClassName}>
         <div className="text-center mb-16 space-y-6">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white">{testimonials.title}</h2>
-          <p className="text-xl text-soft-gray max-w-2xl mx-auto">{testimonials.subtitle}</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white">
+            {testimonials.title}
+          </h2>
+          <p className="text-xl text-soft-gray max-w-2xl mx-auto">
+            {testimonials.subtitle}
+          </p>
         </div>
 
         <div className={testimonials.gridClassName}>
@@ -22,13 +26,17 @@ const Testimonials = () => {
               </div>
 
               <blockquote className="text-soft-gray text-lg leading-relaxed italic font-mono">
-                "{testimonial.quote}"
+                &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
 
               <div className="flex items-center gap-4">
-                <div className={testimonial.avatarClassName}>{testimonial.author[1]}</div>
+                <div className={testimonial.avatarClassName}>
+                  {testimonial.author[1]}
+                </div>
                 <div>
-                  <div className="text-white font-semibold">{testimonial.author}</div>
+                  <div className="text-white font-semibold">
+                    {testimonial.author}
+                  </div>
                 </div>
               </div>
             </div>
