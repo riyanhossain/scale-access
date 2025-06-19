@@ -2,83 +2,144 @@
 
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Check } from 'lucide-react'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import homePageData from '@/data/homePageData.json'
+
+// Zod schema for form validation
+const paymentFormSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+  firstName: z
+    .string()
+    .min(1, 'First name is required')
+    .min(2, 'First name must be at least 2 characters'),
+  lastName: z
+    .string()
+    .min(1, 'Last name is required')
+    .min(2, 'Last name must be at least 2 characters'),
+  currency: z
+    .string()
+    .min(1, 'Please select a currency'),
+})
+
+type PaymentFormData = z.infer<typeof paymentFormSchema>
 
 function PaymentForm() {
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan') || ''
-  const planName = searchParams.get('name') || ''
-  const priceValue = Number(searchParams.get('price') || '0')
 
   const { pricing } = homePageData
-  const selectedPlan = pricing.plans.find((plan) => plan.id === planId) || {
-    name: planName,
-    price: `$${priceValue}`,
-    features: [],
-  }
+  const selectedPlan = pricing.plans.find((plan) => plan.id === planId);
 
-  const [formData, setFormData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-  })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formError, setFormError] = useState('')
+  const [currencyOpen, setCurrencyOpen] = useState(false)
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  // React Hook Form with Zod validation
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<PaymentFormData>({
+    resolver: zodResolver(paymentFormSchema),
+    defaultValues: {
+      email: '',
+      firstName: '',
+      lastName: '',
+      currency: 'USDT', // Default to USDT
+    },
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const selectedCurrency = watch('currency')
+
+  const onSubmit = async (data: PaymentFormData) => {
     setIsSubmitting(true)
-    setFormError('')
+    
+    try {
+      const orderId = Date.now().toString()
+      const url = 'https://app.0xprocessing.com/Payment'
 
-    if (!formData.email || !formData.firstName || !formData.lastName) {
-      setFormError('All fields are required')
+      if (!selectedPlan) {
+        throw new Error('Selected plan not found')
+      }
+
+      // Create URL-encoded data according to 0xProcessing API specification
+      const params = new URLSearchParams()
+      params.append('test', 'true') // Set to false for production
+      params.append('email', data.email)
+      params.append('name', data.firstName)
+      params.append('lastname', data.lastName)
+      params.append('AmountUSD', selectedPlan.priceValue.toString())
+      params.append('currency', data.currency)
+      params.append('MerchantId', "0xMR2409448")
+      params.append('ClientId', orderId)
+      params.append('BillingId', orderId)
+      params.append('ReturnUrl', 'true')
+      params.append('SuccessUrl', `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`)
+      params.append('CancelUrl', `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`)
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.log('Error response body:', errorText)
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
+      }
+
+      // Check if response is JSON (when ReturnUrl=true) or redirect
+      const contentType = response.headers.get('content-type')
+      
+      if (contentType && contentType.includes('application/json')) {
+        // Handle JSON response with redirectUrl
+        const result = await response.json()
+        console.log('Payment response:', result)
+        if (result.redirectUrl) {
+          window.location.href = result.redirectUrl
+        } else {
+          throw new Error('No redirect URL received from payment processor')
+        }
+      } else {
+        // Handle direct redirect (fallback)
+        const responseText = await response.text()
+        console.log('Non-JSON response:', responseText)
+        window.location.href = response.url
+      }
+      
+    } catch (error) {
+      console.error('Payment processing failed:', error)
+      alert(`Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
       setIsSubmitting(false)
-      return
     }
-
-    const form = document.createElement('form')
-    form.method = 'post'
-    form.action = 'https://app.0xprocessing.com/Payment'
-
-    const formInputs = {
-      test: true,
-      email: formData.email,
-      FirstName: formData.firstName,
-      LastName: formData.lastName,
-      AmountUSD: priceValue.toString(),
-      Currency: 'BTC',
-      MerchantId: process.env.NEXT_PUBLIC_OXPROCESSING_MERCHANT_ID || '',
-      ClientId: Date.now().toString(),
-      BillingId: Math.floor(Math.random() * 100000).toString(),
-      SuccessUrl: `${
-        window.location.origin
-      }/payment/success?plan=${planId}&orderId=${Date.now()}`,
-      CancelUrl: `${
-        window.location.origin
-      }/payment/cancel?plan=${planId}&orderId=${Date.now()}`,
-      AutoReturn: true,
-    }
-
-    Object.entries(formInputs).forEach(([name, value]) => {
-      const input = document.createElement('input')
-      input.type = 'hidden'
-      input.name = name
-      input.value = value.toString()
-      form.appendChild(input)
-    })
-
-    document.body.appendChild(form)
-    form.submit()
-    document.body.removeChild(form)
   }
 
   return (
@@ -89,7 +150,7 @@ function PaymentForm() {
             Complete Your Order
           </h1>
           <p className="text-soft-gray text-lg">
-            Enter your details to purchase the {selectedPlan.name} plan
+            Enter your details to purchase the {selectedPlan?.name} plan
           </p>
         </div>
 
@@ -98,14 +159,8 @@ function PaymentForm() {
           <Card className="bg-dark-gray/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
             <h2 className="text-xl font-bold mb-6">Contact Information</h2>
 
-            {formError && (
-              <div className="bg-red-900/30 border border-red-500 text-red-200 p-3 rounded-lg mb-6">
-                {formError}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Your form inputs... */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Email Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -115,16 +170,19 @@ function PaymentForm() {
                 </label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
+                  {...register('email')}
                   className="bg-true-black/50 border-gray-700 text-white"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
+              {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label
@@ -135,14 +193,16 @@ function PaymentForm() {
                   </label>
                   <Input
                     id="firstName"
-                    name="firstName"
                     type="text"
                     placeholder="John"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
+                    {...register('firstName')}
                     className="bg-true-black/50 border-gray-700 text-white"
-                    required
                   />
+                  {errors.firstName && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -154,15 +214,82 @@ function PaymentForm() {
                   </label>
                   <Input
                     id="lastName"
-                    name="lastName"
                     type="text"
                     placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
+                    {...register('lastName')}
                     className="bg-true-black/50 border-gray-700 text-white"
-                    required
                   />
+                  {errors.lastName && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.lastName.message}
+                    </p>
+                  )}
                 </div>
+              </div>
+
+              {/* Currency Selection */}
+              <div className="space-y-2 w-full">
+                <label className="block text-sm font-medium text-soft-gray">
+                  Payment Currency <sup className="text-red-500">*</sup>
+                </label>
+                <Controller
+                  name="currency"
+                  control={control}
+                  render={({ field }) => (
+                    <Popover open={currencyOpen} onOpenChange={setCurrencyOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={currencyOpen}
+                          className="w-full justify-between bg-true-black/50 border-gray-700 text-white hover:bg-true-black/70"
+                        >
+                          {field.value
+                            ? homePageData.currency.find((curr) => curr === field.value)
+                            : "Select currency..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="min-w-full p-0 bg-dark-gray border-gray-700">
+                        <Command className="bg-dark-gray">
+                          <CommandInput 
+                            placeholder="Search currency..." 
+                            className="h-9 bg-dark-gray text-white border-gray-700" 
+                          />
+                          <CommandList>
+                            <CommandEmpty className="text-soft-gray">No currency found.</CommandEmpty>
+                            <CommandGroup>
+                              {homePageData.currency.map((curr) => (
+                                <CommandItem
+                                  key={curr}
+                                  value={curr}
+                                  onSelect={(currentValue) => {
+                                    field.onChange(currentValue.toUpperCase())
+                                    setCurrencyOpen(false)
+                                  }}
+                                  className="text-white !bg-dark-gray hover:!bg-gray-700"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      field.value === curr ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {curr}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                />
+                {errors.currency && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.currency.message}
+                  </p>
+                )}
               </div>
 
               <Button
@@ -170,7 +297,7 @@ function PaymentForm() {
                 disabled={isSubmitting}
                 className="w-full bg-neon-blue hover:bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 cursor-pointer"
               >
-                {isSubmitting ? 'Processing...' : `Pay ${selectedPlan.price}`}
+                {isSubmitting ? 'Processing...' : `Pay ${selectedPlan?.price}`}
               </Button>
             </form>
           </Card>
@@ -182,10 +309,10 @@ function PaymentForm() {
             <div className="space-y-4">
               <div className="flex justify-between items-center pb-4 border-b border-gray-700">
                 <h3 className="font-semibold text-lg">
-                  {selectedPlan.name} Plan
+                  {selectedPlan?.name} Plan
                 </h3>
                 <span className="text-neon-blue font-bold text-xl">
-                  {selectedPlan.price}
+                  {selectedPlan?.price}
                 </span>
               </div>
 
@@ -195,7 +322,7 @@ function PaymentForm() {
                   Plan includes:
                 </h4>
                 <ul className="space-y-3">
-                  {selectedPlan.features.map((feature, index) => (
+                  {selectedPlan?.features.map((feature, index) => (
                     <li
                       key={index}
                       className="flex items-center gap-3 text-soft-gray"
@@ -210,11 +337,11 @@ function PaymentForm() {
                 <div className="flex justify-between items-center text-lg">
                   <span className="font-medium">Total</span>
                   <span className="font-bold text-white">
-                    {selectedPlan.price}
+                    {selectedPlan?.price}
                   </span>
                 </div>
                 <p className="text-xs text-soft-gray mt-2">
-                  Payment will be processed securely via 0xProcessing with USDT
+                  Payment will be processed securely via 0xProcessing with {selectedCurrency || 'USDT'}
                 </p>
               </div>
             </div>

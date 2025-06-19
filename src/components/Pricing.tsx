@@ -2,18 +2,17 @@
 
 import { Check, ArrowRight } from 'lucide-react'
 import homePageData from '@/data/homePageData.json'
+import { useRouter } from 'next/navigation'
 
 const Pricing = () => {
   const { pricing } = homePageData
+  const router = useRouter()
 
   const handlePurchase = (
     planId: string,
-    planName: string,
-    priceValue: number
   ) => {
-    window.location.href = `/payment/form?plan=${planId}&name=${encodeURIComponent(
-      planName
-    )}&price=${priceValue}`
+    router.push(`/payment/form?plan=${planId}`)
+
   }
 
   return (
@@ -62,7 +61,7 @@ const Pricing = () => {
               <div className="space-y-3">
                 <button
                   onClick={() =>
-                    handlePurchase(plan.id, plan.name, plan.priceValue)
+                    handlePurchase(plan.id)
                   }
                   className={`cursor-pointer ${
                     pricing.buttons.primary.baseClassName

@@ -45,7 +45,7 @@ function PaymentSuccessContent() {
         <ul className="text-left text-soft-gray space-y-2 text-sm">
           <li className="flex items-start gap-2">
             <span className="text-neon-blue">•</span>
-            <span>You'll receive a confirmation email within 5 minutes</span>
+            <span>You&apos;ll receive a confirmation email within 5 minutes</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-neon-blue">•</span>
