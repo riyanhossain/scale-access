@@ -114,8 +114,8 @@
       {
         "id": "starter",
         "name": "Starter",
-        "price": "$2",
-        "priceValue": 2,
+        "price": "$195",
+        "priceValue": 195,
         "features": ["1 Facebook Ad Account", "Aged 1–2 months", "Delivery in 2 hours"],
         "popular": false,
         "cardClassName": "relative bg-true-black/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:border-neon-blue/50"
