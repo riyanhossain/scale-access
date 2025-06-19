@@ -86,7 +86,7 @@ function PaymentForm() {
 
       // Create URL-encoded data according to 0xProcessing API specification
       const params = new URLSearchParams()
-      params.append('test', 'true') // Set to false for production
+      params.append('test', 'false') // Set to false for production
       params.append('email', data.email)
       params.append('name', data.firstName)
       params.append('lastname', data.lastName)
@@ -96,6 +96,7 @@ function PaymentForm() {
       params.append('ClientId', orderId)
       params.append('BillingId', orderId)
       params.append('ReturnUrl', 'true')
+      params.append('AutoReturn', 'true')
       params.append(
         'SuccessUrl',
         `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`
