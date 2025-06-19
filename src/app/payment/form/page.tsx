@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import { useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -17,42 +17,42 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import homePageData from '@/data/homePageData.json'
+} from "@/components/ui/popover";
+import homePageData from "@/data/homePageData.json";
 
 // Zod schema for form validation
 const paymentFormSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
   firstName: z
     .string()
-    .min(1, 'First name is required')
-    .min(2, 'First name must be at least 2 characters'),
+    .min(1, "First name is required")
+    .min(2, "First name must be at least 2 characters"),
   lastName: z
     .string()
-    .min(1, 'Last name is required')
-    .min(2, 'Last name must be at least 2 characters'),
-  currency: z.string().min(1, 'Please select a currency'),
-})
+    .min(1, "Last name is required")
+    .min(2, "Last name must be at least 2 characters"),
+  currency: z.string().min(1, "Please select a currency"),
+});
 
-type PaymentFormData = z.infer<typeof paymentFormSchema>
+type PaymentFormData = z.infer<typeof paymentFormSchema>;
 
 function PaymentForm() {
-  const searchParams = useSearchParams()
-  const planId = searchParams.get('plan') || ''
+  const searchParams = useSearchParams();
+  const planId = searchParams.get("plan") || "";
 
-  const { pricing } = homePageData
-  const selectedPlan = pricing.plans.find((plan) => plan.id === planId)
+  const { pricing } = homePageData;
+  const selectedPlan = pricing.plans.find((plan) => plan.id === planId);
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [currencyOpen, setCurrencyOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
 
   // React Hook Form with Zod validation
   const {
@@ -64,24 +64,24 @@ function PaymentForm() {
   } = useForm<PaymentFormData>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: {
-      email: '',
-      firstName: '',
-      lastName: '',
-      currency: 'USDT', // Default to USDT
+      email: "",
+      firstName: "",
+      lastName: "",
+      currency: "USDT", // Default to USDT
     },
-  })
+  });
 
-  const selectedCurrency = watch('currency')
+  const selectedCurrency = watch("currency");
 
   const onSubmit = async (data: PaymentFormData) => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      const orderId = Date.now().toString()
-      const url = 'https://app.0xprocessing.com/Payment'
+      const orderId = Date.now().toString();
+      const url = "https://app.0xprocessing.com/Payment";
 
       if (!selectedPlan) {
-        throw new Error('Selected plan not found')
+        throw new Error("Selected plan not found");
       }
 
       // Create URL-encoded data according to 0xProcessing API specification
@@ -98,57 +98,59 @@ function PaymentForm() {
       params.append('ReturnUrl', 'true')
       params.append('AutoReturn', 'true')
       params.append(
-        'SuccessUrl',
+        "SuccessUrl",
         `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`
-      )
+      );
       params.append(
-        'CancelUrl',
+        "CancelUrl",
         `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`
-      )
+      );
 
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: params.toString(),
-      })
+      });
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.log('Error response body:', errorText)
-        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
+        const errorText = await response.text();
+        console.log("Error response body:", errorText);
+        throw new Error(
+          `HTTP error! status: ${response.status} - ${errorText}`
+        );
       }
 
       // Check if response is JSON (when ReturnUrl=true) or redirect
-      const contentType = response.headers.get('content-type')
+      const contentType = response.headers.get("content-type");
 
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType && contentType.includes("application/json")) {
         // Handle JSON response with redirectUrl
-        const result = await response.json()
-        console.log('Payment response:', result)
+        const result = await response.json();
+        console.log("Payment response:", result);
         if (result.redirectUrl) {
-          window.location.href = result.redirectUrl
+          window.location.href = result.redirectUrl;
         } else {
-          throw new Error('No redirect URL received from payment processor')
+          throw new Error("No redirect URL received from payment processor");
         }
       } else {
         // Handle direct redirect (fallback)
-        const responseText = await response.text()
-        console.log('Non-JSON response:', responseText)
-        window.location.href = response.url
+        const responseText = await response.text();
+        console.log("Non-JSON response:", responseText);
+        window.location.href = response.url;
       }
     } catch (error) {
-      console.error('Payment processing failed:', error)
+      console.error("Payment processing failed:", error);
       alert(
         `Payment processing failed: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`
-      )
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-true-black text-white py-12 px-4 mt-32">
@@ -180,7 +182,7 @@ function PaymentForm() {
                   id="email"
                   type="email"
                   placeholder="your@email.com"
-                  {...register('email')}
+                  {...register("email")}
                   className="bg-true-black/50 border-gray-700 text-white"
                 />
                 {errors.email && (
@@ -203,7 +205,7 @@ function PaymentForm() {
                     id="firstName"
                     type="text"
                     placeholder="John"
-                    {...register('firstName')}
+                    {...register("firstName")}
                     className="bg-true-black/50 border-gray-700 text-white"
                   />
                   {errors.firstName && (
@@ -224,7 +226,7 @@ function PaymentForm() {
                     id="lastName"
                     type="text"
                     placeholder="Doe"
-                    {...register('lastName')}
+                    {...register("lastName")}
                     className="bg-true-black/50 border-gray-700 text-white"
                   />
                   {errors.lastName && (
@@ -256,7 +258,7 @@ function PaymentForm() {
                             ? homePageData.currency.find(
                                 (curr) => curr === field.value
                               )
-                            : 'Select currency...'}
+                            : "Select currency..."}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -276,17 +278,17 @@ function PaymentForm() {
                                   key={curr}
                                   value={curr}
                                   onSelect={(currentValue) => {
-                                    field.onChange(currentValue.toUpperCase())
-                                    setCurrencyOpen(false)
+                                    field.onChange(currentValue.toUpperCase());
+                                    setCurrencyOpen(false);
                                   }}
                                   className="text-white !bg-dark-gray hover:!bg-gray-700"
                                 >
                                   <Check
                                     className={cn(
-                                      'mr-2 h-4 w-4',
+                                      "mr-2 h-4 w-4",
                                       field.value === curr
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
+                                        ? "opacity-100"
+                                        : "opacity-0"
                                     )}
                                   />
                                   {curr}
@@ -311,7 +313,7 @@ function PaymentForm() {
                 disabled={isSubmitting}
                 className="w-full bg-neon-blue hover:bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 cursor-pointer"
               >
-                {isSubmitting ? 'Processing...' : `Pay ${selectedPlan?.price}`}
+                {isSubmitting ? "Processing..." : `Pay ${selectedPlan?.price}`}
               </Button>
             </form>
           </Card>
@@ -355,8 +357,8 @@ function PaymentForm() {
                   </span>
                 </div>
                 <p className="text-xs text-soft-gray mt-2">
-                  Payment will be processed securely via 0xProcessing with{' '}
-                  {selectedCurrency || 'USDT'}
+                  Payment will be processed securely via 0xProcessing with{" "}
+                  {selectedCurrency || "USDT"}
                 </p>
               </div>
             </div>
@@ -364,7 +366,7 @@ function PaymentForm() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function PaymentFormPage() {
@@ -372,5 +374,5 @@ export default function PaymentFormPage() {
     <Suspense fallback={<div>Loading...</div>}>
       <PaymentForm />
     </Suspense>
-  )
+  );
 }
