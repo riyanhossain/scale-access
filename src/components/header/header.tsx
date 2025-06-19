@@ -11,7 +11,6 @@ const Header = () => {
   const navLinks = useMemo(
     () => [
       { name: 'Performance', href: '#performance' },
-      { name: 'Pricing', href: '#pricing' },
       { name: 'Trusted By', href: '#trusted-by' },
       { name: 'Contact Us', href: '#contact' },
       { name: 'Buy Now', href: '#pricing', isButton: true },
@@ -66,9 +65,9 @@ const Header = () => {
               src="/logo.png"
               alt="Logo"
               width={150}
-              height={40}
+              height={64}
               priority
-              className="transition-transform duration-300 hover:scale-105 h-16 object-contain"
+              className="transition-transform duration-300 hover:scale-105 h-16 object-contain w-auto"
             />
           </Link>
 
@@ -79,7 +78,7 @@ const Header = () => {
                   {link.isButton ? (
                     <Link
                       href={link.href}
-                      className={`group bg-neon-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 flex items-center gap-2 ${
+                      className={`group bg-neon-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-neon-blue/25 flex items-center gap-2${
                         activeLink === link.href.substring(1)
                           ? 'bg-blue-700'
                           : ''
@@ -90,10 +89,10 @@ const Header = () => {
                   ) : (
                     <Link
                       href={link.href}
-                      className={`relative font-medium hover:text-blue-600 transition-colors duration-300 py-2 ${
+                      className={`relative font-medium text-gray-800  py-2 group${
                         activeLink === link.href.substring(1)
                           ? 'text-blue-600'
-                          : 'text-gray-800'
+                          : ''
                       }`}
                     >
                       <span>{link.name}</span>
@@ -101,7 +100,7 @@ const Header = () => {
                         className={`absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform origin-left transition-transform duration-300 ${
                           activeLink === link.href.substring(1)
                             ? 'scale-x-100'
-                            : 'scale-x-0 hover:scale-x-100'
+                            : 'scale-x-0 group-hover:scale-x-100'
                         }`}
                       ></span>
                     </Link>
@@ -154,11 +153,11 @@ const Header = () => {
                     <Link
                       href={link.href}
                       onClick={() => setIsOpen(false)}
-                      className={`block py-2 font-medium ${
+                      className={`block py-2 font-medium outline-none ${
                         activeLink === link.href.substring(1)
                           ? 'text-blue-600'
                           : 'text-gray-800'
-                      }`}
+                      } hover:text-blue-600 transition-colors`}
                     >
                       {link.name}
                     </Link>

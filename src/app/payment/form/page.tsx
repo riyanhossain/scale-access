@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 import {
   Command,
   CommandEmpty,
@@ -17,12 +17,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from '@/components/ui/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover'
 import homePageData from '@/data/homePageData.json'
 
 // Zod schema for form validation
@@ -39,9 +39,7 @@ const paymentFormSchema = z.object({
     .string()
     .min(1, 'Last name is required')
     .min(2, 'Last name must be at least 2 characters'),
-  currency: z
-    .string()
-    .min(1, 'Please select a currency'),
+  currency: z.string().min(1, 'Please select a currency'),
 })
 
 type PaymentFormData = z.infer<typeof paymentFormSchema>
@@ -51,7 +49,7 @@ function PaymentForm() {
   const planId = searchParams.get('plan') || ''
 
   const { pricing } = homePageData
-  const selectedPlan = pricing.plans.find((plan) => plan.id === planId);
+  const selectedPlan = pricing.plans.find((plan) => plan.id === planId)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [currencyOpen, setCurrencyOpen] = useState(false)
@@ -77,7 +75,7 @@ function PaymentForm() {
 
   const onSubmit = async (data: PaymentFormData) => {
     setIsSubmitting(true)
-    
+
     try {
       const orderId = Date.now().toString()
       const url = 'https://app.0xprocessing.com/Payment'
@@ -94,12 +92,18 @@ function PaymentForm() {
       params.append('lastname', data.lastName)
       params.append('AmountUSD', selectedPlan.priceValue.toString())
       params.append('currency', data.currency)
-      params.append('MerchantId', "0xMR2409448")
+      params.append('MerchantId', '0xMR2409448')
       params.append('ClientId', orderId)
       params.append('BillingId', orderId)
       params.append('ReturnUrl', 'true')
-      params.append('SuccessUrl', `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`)
-      params.append('CancelUrl', `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`)
+      params.append(
+        'SuccessUrl',
+        `${window.location.origin}/payment/success?plan=${planId}&orderId=${orderId}`
+      )
+      params.append(
+        'CancelUrl',
+        `${window.location.origin}/payment/cancel?plan=${planId}&orderId=${orderId}`
+      )
 
       const response = await fetch(url, {
         method: 'POST',
@@ -117,7 +121,7 @@ function PaymentForm() {
 
       // Check if response is JSON (when ReturnUrl=true) or redirect
       const contentType = response.headers.get('content-type')
-      
+
       if (contentType && contentType.includes('application/json')) {
         // Handle JSON response with redirectUrl
         const result = await response.json()
@@ -133,17 +137,20 @@ function PaymentForm() {
         console.log('Non-JSON response:', responseText)
         window.location.href = response.url
       }
-      
     } catch (error) {
       console.error('Payment processing failed:', error)
-      alert(`Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      alert(
+        `Payment processing failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      )
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-true-black text-white py-12 px-4">
+    <div className="min-h-screen bg-true-black text-white py-12 px-4 mt-32">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -245,19 +252,23 @@ function PaymentForm() {
                           className="w-full justify-between bg-true-black/50 border-gray-700 text-white hover:bg-true-black/70"
                         >
                           {field.value
-                            ? homePageData.currency.find((curr) => curr === field.value)
-                            : "Select currency..."}
+                            ? homePageData.currency.find(
+                                (curr) => curr === field.value
+                              )
+                            : 'Select currency...'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="min-w-full p-0 bg-dark-gray border-gray-700">
                         <Command className="bg-dark-gray">
-                          <CommandInput 
-                            placeholder="Search currency..." 
-                            className="h-9 bg-dark-gray text-white border-gray-700" 
+                          <CommandInput
+                            placeholder="Search currency..."
+                            className="h-9 bg-dark-gray text-white border-gray-700"
                           />
                           <CommandList>
-                            <CommandEmpty className="text-soft-gray">No currency found.</CommandEmpty>
+                            <CommandEmpty className="text-soft-gray">
+                              No currency found.
+                            </CommandEmpty>
                             <CommandGroup>
                               {homePageData.currency.map((curr) => (
                                 <CommandItem
@@ -271,8 +282,10 @@ function PaymentForm() {
                                 >
                                   <Check
                                     className={cn(
-                                      "mr-2 h-4 w-4",
-                                      field.value === curr ? "opacity-100" : "opacity-0"
+                                      'mr-2 h-4 w-4',
+                                      field.value === curr
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
                                     )}
                                   />
                                   {curr}
@@ -341,7 +354,8 @@ function PaymentForm() {
                   </span>
                 </div>
                 <p className="text-xs text-soft-gray mt-2">
-                  Payment will be processed securely via 0xProcessing with {selectedCurrency || 'USDT'}
+                  Payment will be processed securely via 0xProcessing with{' '}
+                  {selectedCurrency || 'USDT'}
                 </p>
               </div>
             </div>
